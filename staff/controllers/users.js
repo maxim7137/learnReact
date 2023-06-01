@@ -11,8 +11,15 @@ const login = async (req, res, next) => {
 
   const user = await prisma.user.findFirst({ where: email });
 
-  const isPasswordCorrect =
-    user && (await bcrypt.compare(password, user.password));
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+  if (user && isPasswordCorrect) {
+    res.status(200).json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    });
+  }
 };
 
 const register = async (req, res, next) => {
