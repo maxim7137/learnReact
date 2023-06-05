@@ -17,8 +17,8 @@ const getEmployees = async (req, res, next) => {
 
 /** получение сотрудника по id */
 const getEmployee = async (req, res, next) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     res.status(200).json(id);
   } catch (error) {
     console.log(error);
@@ -53,7 +53,7 @@ const createEmployee = async (req, res, next) => {
         },
       },
     });
-    res.json(employee);
+    res.status(201).json(employee);
   } catch (error) {
     console.log(error);
     res.status(400).json(error);
@@ -63,6 +63,11 @@ const createEmployee = async (req, res, next) => {
 /** удаление сотрудника */
 const deleteEmployee = async (req, res, next) => {
   try {
+    const { id } = req.params;
+    const employee = await prisma.employee.delete({
+      where: { id },
+    });
+    res.status(201).json(employee);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: `Удаление сотрудника по id: ${error}` });
