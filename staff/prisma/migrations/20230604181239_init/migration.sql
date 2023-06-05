@@ -12,9 +12,9 @@ CREATE TABLE "Employee" (
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "age" INTEGER NOT NULL,
-    "adress" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    CONSTRAINT "Employee_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "address" TEXT NOT NULL,
+    "authorId" TEXT NOT NULL,
+    CONSTRAINT "Employee_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex
