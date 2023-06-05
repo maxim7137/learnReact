@@ -19,10 +19,17 @@ const getEmployees = async (req, res, next) => {
 const getEmployee = async (req, res, next) => {
   try {
     const { id } = req.params;
-    res.status(200).json(id);
+    const employee = await prisma.employee.findFirst({
+      where: { id },
+    });
+    if (employee) {
+      res.status(200).json(employee);
+    } else {
+      res.status(404).json({ message: 'Такого сотрудника не существует' });
+    }
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: `Получение сотрудника по id: ${error}` });
+    res.status(400).json({ message: `Ошибка поиска сотрудника: ${error}` });
   }
 };
 
@@ -64,10 +71,20 @@ const createEmployee = async (req, res, next) => {
 const deleteEmployee = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const employee = await prisma.employee.delete({
+    const userId = req.user.id;
+    const deletedEmployee = await prisma.employee.findFirst({
       where: { id },
     });
-    res.status(201).json(employee);
+    if (deletedEmployee.authorId === userId) {
+      const employee = await prisma.employee.delete({
+        where: { id },
+      });
+      res.status(200).json({ deleted: employee });
+    } else {
+      res
+        .status(403)
+        .json({ message: 'Нет прав доступа для удаления этого сотрудника' });
+    }
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: `Удаление сотрудника по id: ${error}` });
@@ -77,11 +94,34 @@ const deleteEmployee = async (req, res, next) => {
 /** редактирование сотрудника */
 const editEmployee = async (req, res, next) => {
   try {
+    const { firstName, lastName, age, address } = req.body;
+    const { id } = req.params;
+    const userId = req.user.id;
+    const editedEmployee = await prisma.employee.findFirst({
+      where: { id },
+    });
+    if (editedEmployee.authorId === userId) {
+      const employee = await prisma.employee.update({
+        where: { id },
+        data: {
+          firstName,
+          lastName,
+          age: age / 1,
+          address,
+          // author: { connect: { id: userId } },
+        },
+      });
+      res.status(200).json({ edited: employee });
+    } else {
+      res.status(403).json({
+        message: 'Нет прав доступа для редактирования этого сотрудника',
+      });
+    }
   } catch (error) {
     console.log(error);
-    res
-      .status(400)
-      .json({ message: `Редактирование сотрудника по id: ${error}` });
+    res.status(400).json({
+      message: `Редактирование сотрудника по id, возможно неверный id: ${error}`,
+    });
   }
 };
 
