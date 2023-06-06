@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-const { auth } = require('../middleware/auth');
 const {
   getEmployees,
   getEmployee,
@@ -13,18 +12,18 @@ const {
 // /api/employees
 
 /** получить всех сотрудников */
-router.get('/all', auth, getEmployees);
+router.get('/all', getEmployees);
 
 /** получить сотрудника по id */
-router.get('/:id', auth, getEmployee);
+router.get('/:id', getEmployee);
 
 /** создать сотрудника */
-router.post('/add', auth, createEmployee);
+router.post('/add', createEmployee);
 
 /** удалить сотрудника по id */
-router.delete('/remove/:id', auth, deleteEmployee);
+router.delete('/remove/:id', deleteEmployee);
 
 /** редактировать сотрудника по id */
-router.put('/edit/:id', auth, editEmployee);
+router.put('/edit/:id', editEmployee);
 
 module.exports = router;
