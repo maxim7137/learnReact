@@ -94,12 +94,17 @@ const deleteEmployee = async (req, res, next) => {
 /** редактирование сотрудника */
 const editEmployee = async (req, res, next) => {
   try {
-    const { firstName, lastName, age, address } = req.body;
     const { id } = req.params;
     const userId = req.user.id;
     const editedEmployee = await prisma.employee.findFirst({
       where: { id },
     });
+    const {
+      firstName = editedEmployee.firstName,
+      lastName = editedEmployee.lastName,
+      age = editedEmployee.age,
+      address = editedEmployee.address,
+    } = req.body;
     if (editedEmployee.authorId === userId) {
       const employee = await prisma.employee.update({
         where: { id },
